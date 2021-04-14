@@ -1,20 +1,27 @@
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Redirect,
+  Route,
+  Switch,
+} from "react-router-dom";
+import Home from "./screens/Home";
+import Login from "./screens/Login";
+import NotFound from "./screens/NotFound";
 
-function App() {
+const App = () => {
+  const isLoggedIn = true;
   return (
     <div>
       <Router>
         <Switch>
           <Route path="/" exact>
-            <h1>Home</h1>
+            {isLoggedIn ? <Home /> : <Login />}
           </Route>
-          <Route path="/join" exact>
-            <h1>Join</h1>
-          </Route>
+          <Redirect to="/" />
         </Switch>
       </Router>
     </div>
   );
-}
+};
 
 export default App;
