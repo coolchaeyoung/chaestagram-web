@@ -1,15 +1,11 @@
-import {
-  BrowserRouter as Router,
-  Redirect,
-  Route,
-  Switch,
-} from "react-router-dom";
+import { useState } from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Home from "./screens/Home";
 import Login from "./screens/Login";
 import NotFound from "./screens/NotFound";
 
 const App = () => {
-  const isLoggedIn = true;
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   return (
     <div>
       <Router>
@@ -17,7 +13,9 @@ const App = () => {
           <Route path="/" exact>
             {isLoggedIn ? <Home /> : <Login />}
           </Route>
-          <Redirect to="/" />
+          <Route>
+            <NotFound />
+          </Route>
         </Switch>
       </Router>
     </div>
