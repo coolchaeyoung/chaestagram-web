@@ -13,6 +13,7 @@ import Separator from "../components/auth/Separator";
 import BottomBox from "../components/auth/BottomBox";
 import routes from "../routes";
 import PageTitle from "../components/PageTitle";
+import { useForm } from "react-hook-form";
 
 const FacebookLogin = styled.div`
   color: #385285;
@@ -24,6 +25,8 @@ const FacebookLogin = styled.div`
 `;
 
 const Login = () => {
+  const { register, watch } = useForm();
+  console.log(watch());
   return (
     <AuthLayout>
       <PageTitle title="Login" />
@@ -32,8 +35,12 @@ const Login = () => {
           <FontAwesomeIcon icon={faInstagram} size="3x" />
         </div>
         <form>
-          <Input type="text" placeholder="Username" />
-          <Input type="password" placeholder="Password" />
+          <Input type="text" placeholder="Username" {...register("username")} />
+          <Input
+            type="password"
+            placeholder="Password"
+            {...register("password")}
+          />
           <Button type="submit" value="Log in" />
         </form>
         <Separator />
