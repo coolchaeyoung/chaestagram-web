@@ -13,6 +13,7 @@ import Separator from "../components/auth/Separator";
 import BottomBox from "../components/auth/BottomBox";
 import routes from "../routes";
 import PageTitle from "../components/PageTitle";
+import FormError from "../components/auth/FormError";
 import { useForm } from "react-hook-form";
 
 const FacebookLogin = styled.div`
@@ -25,8 +26,10 @@ const FacebookLogin = styled.div`
 `;
 
 const Login = () => {
-  const { register, watch } = useForm();
-  console.log(watch());
+  const { register, handleSubmit, errors, formState } = useForm({
+    mode: "onChange",
+  });
+  const onSubmitValid = (data) => {};
   return (
     <AuthLayout>
       <PageTitle title="Login" />
@@ -34,21 +37,34 @@ const Login = () => {
         <div>
           <FontAwesomeIcon icon={faInstagram} size="3x" />
         </div>
-        <form>
-          <Input type="text" placeholder="Username" {...register("username")} />
+
+        <form onSubmit={handleSubmit(onSubmitValid)}>
+          <Input
+            type="text"
+            placeholder="Username"
+            hasError={Boolean(errors?.username?.message)}
+            {...register("username")}
+          />
+          <FormError message={errors?.username?.message} />
+
           <Input
             type="password"
             placeholder="Password"
+            hasError={Boolean(errors?.password?.message)}
             {...register("password")}
           />
-          <Button type="submit" value="Log in" />
+          <FormError message={errors?.password?.message} />
+          <Button type="submit" value="Log in" disabled={!formState.isValid} />
         </form>
+
         <Separator />
+
         <FacebookLogin>
           <FontAwesomeIcon icon={faFacebookSquare} />
           <span>Log in with Facebook</span>
         </FacebookLogin>
       </FormBox>
+
       <BottomBox
         cta="Don't have an account?"
         linkText="Sign up"
