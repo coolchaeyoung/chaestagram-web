@@ -26,9 +26,14 @@ const FacebookLogin = styled.div`
 `;
 
 const Login = () => {
-  const { register, handleSubmit, errors, formState } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm({
     mode: "onChange",
   });
+  console.log(errors);
   const onSubmitValid = (data) => {};
   return (
     <AuthLayout>
@@ -43,7 +48,13 @@ const Login = () => {
             type="text"
             placeholder="Username"
             hasError={Boolean(errors?.username?.message)}
-            {...register("username")}
+            {...register("username", {
+              required: true,
+              minLength: {
+                value: 5,
+                message: "Username should be longer than 5 chars",
+              },
+            })}
           />
           <FormError message={errors?.username?.message} />
 
@@ -51,10 +62,11 @@ const Login = () => {
             type="password"
             placeholder="Password"
             hasError={Boolean(errors?.password?.message)}
-            {...register("password")}
+            {...register("password", { required: "Password is required" })}
           />
           <FormError message={errors?.password?.message} />
-          <Button type="submit" value="Log in" disabled={!formState.isValid} />
+
+          <Button type="submit" value="Log in" disabled={!isValid} />
         </form>
 
         <Separator />
