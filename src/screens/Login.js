@@ -16,6 +16,7 @@ import PageTitle from "../components/PageTitle";
 import FormError from "../components/auth/FormError";
 import { useForm } from "react-hook-form";
 import { gql, useMutation } from "@apollo/client";
+import { isLoggedUserIn } from "../apollo";
 
 const FacebookLogin = styled.div`
   color: #385285;
@@ -41,18 +42,23 @@ const Login = () => {
     register,
     handleSubmit,
     setError,
+    clearErrors,
+    trigger,
     formState: { errors, isValid },
   } = useForm({
     mode: "onChange",
   });
 
   const [login, { loading }] = useMutation(LOGIN_MUTATION, {
-    onCompleted({ login }) {
-      if (login.error) {
+    onCompleted(data) {
+      const { ok, token } = data.login;
+      if (!ok) {
         setError("result", {
-          message: login.error,
+          message: "Wrong Username or Password",
         });
+        return;
       }
+      isLoggedUserIn(token);
     },
   });
 
@@ -62,6 +68,14 @@ const Login = () => {
     }
     login({ variables: { username, password } });
   };
+
+  const setClearError = () => {
+    if (errors?.result) {
+      clearErrors("result");
+      trigger();
+    }
+  };
+
   return (
     <AuthLayout>
       <PageTitle title="Login" />
@@ -74,34 +88,29 @@ const Login = () => {
           <Input
             type="text"
             placeholder="Username"
-            hasError={Boolean(errors?.username?.message)}
             {...register("username", {
               required: true,
-              minLength: {
-                value: 5,
-                message: "Username should be longer than 5 chars",
-              },
+              validate: setClearError,
             })}
           />
-          <FormError message={errors?.username?.message} />
 
           <Input
             type="password"
             placeholder="Password"
-            hasError={Boolean(errors?.password?.message)}
-            {...register("password", { required: "Password is required" })}
+            {...register("password", {
+              required: true,
+              validate: setClearError,
+            })}
           />
-          <FormError message={errors?.password?.message} />
 
           <Button
             type="submit"
             value={loading ? "Loading" : "Log in"}
             disabled={loading || !isValid}
           />
-          <FormError message={errors?.result?.message} />
         </form>
         <Separator />
-
+        <FormError message={errors?.result?.message} margin={"0 0 10px 0"} />
         <FacebookLogin>
           <FontAwesomeIcon icon={faFacebookSquare} />
           <span>Log in with Facebook</span>
