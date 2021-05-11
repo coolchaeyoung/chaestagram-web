@@ -15,6 +15,7 @@ import { useForm } from "react-hook-form";
 import { gql, useMutation } from "@apollo/client";
 import { useHistory } from "react-router";
 import FormError from "../components/auth/FormError";
+import { isLoggedUserIn } from "../apollo";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -44,6 +45,7 @@ const CREATE_ACCOUNT_MUTATION = gql`
       password: $password
     ) {
       ok
+      token
       error
     }
   }
@@ -63,13 +65,16 @@ const SignUp = () => {
   });
 
   const [createAccount, { loading }] = useMutation(CREATE_ACCOUNT_MUTATION, {
-    onCompleted({ createAccount }) {
-      if (!createAccount.ok) {
+    onCompleted(data) {
+      const { ok, error, token } = data.createAccount;
+      if (!ok) {
         setError("result", {
           message: "Can't Sign In",
         });
+        console.log(error);
         return;
       }
+      isLoggedUserIn(token);
       history.push(routes.home);
     },
   });
