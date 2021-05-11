@@ -11,6 +11,10 @@ import Input from "../components/auth/Input";
 import { FatLink } from "../components/shared";
 import routes from "../routes";
 import PageTitle from "../components/PageTitle";
+import { useForm } from "react-hook-form";
+import { gql, useMutation } from "@apollo/client";
+import { useHistory } from "react-router";
+import FormError from "../components/auth/FormError";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -24,7 +28,68 @@ const Subtitle = styled(FatLink)`
   margin-top: 10px;
 `;
 
-function SignUp() {
+const CREATE_ACCOUNT_MUTATION = gql`
+  mutation createAccount(
+    $firstName: String!
+    $lastName: String!
+    $username: String!
+    $email: String!
+    $password: String!
+  ) {
+    createAccount(
+      firstName: $firstName
+      lastName: $lastName
+      username: $username
+      email: $email
+      password: $password
+    ) {
+      ok
+      error
+    }
+  }
+`;
+
+const SignUp = () => {
+  const history = useHistory();
+  const {
+    register,
+    handleSubmit,
+    setError,
+    clearErrors,
+    trigger,
+    formState: { errors, isValid },
+  } = useForm({
+    mode: "onChange",
+  });
+
+  const [createAccount, { loading }] = useMutation(CREATE_ACCOUNT_MUTATION, {
+    onCompleted({ createAccount }) {
+      if (!createAccount.ok) {
+        setError("result", {
+          message: "Can't Sign In",
+        });
+        return;
+      }
+      history.push(routes.home);
+    },
+  });
+
+  const onSubmitValid = (data) => {
+    if (loading) {
+      return;
+    }
+    const { firstName, lastName, username, email, password } = data;
+    createAccount({
+      variables: { firstName, lastName, username, email, password },
+    });
+  };
+
+  const setClearError = () => {
+    if (errors?.result) {
+      clearErrors("result");
+      trigger();
+    }
+  };
   return (
     <AuthLayout>
       <PageTitle title={"Sign up"} />
@@ -35,16 +100,57 @@ function SignUp() {
             Sign up to see photos and videos from your friends.
           </Subtitle>
         </HeaderContainer>
-        <form>
-          <Input type="text" placeholder="Name" />
-          <Input type="text" placeholder="Email" />
-          <Input type="text" placeholder="Username" />
-          <Input type="password" placeholder="Password" />
-          <Button type="submit" value="Sign up" />
+        <form onSubmit={handleSubmit(onSubmitValid)}>
+          <Input
+            type="text"
+            placeholder="First Name"
+            {...register("firstName", {
+              required: true,
+              validate: setClearError,
+            })}
+          />
+          <Input
+            type="text"
+            placeholder="Last Name"
+            {...register("lastName", {
+              required: true,
+              validate: setClearError,
+            })}
+          />
+          <Input
+            type="text"
+            placeholder="Username"
+            {...register("username", {
+              required: true,
+              validate: setClearError,
+            })}
+          />
+          <Input
+            type="text"
+            placeholder="Email"
+            {...register("email", {
+              required: true,
+              validate: setClearError,
+            })}
+          />
+          <Input
+            type="password"
+            placeholder="Password"
+            {...register("password", {
+              required: true,
+              validate: setClearError,
+            })}
+          />
+          <Button
+            type="submit"
+            value="Sign up"
+            disabled={loading || !isValid}
+          />
         </form>
+        <FormError message={errors?.result?.message} margin={"10px 0 0 0"} />
       </FormBox>
       <BottomBox cta="Have an account?" linkText="Log in" link={routes.home} />
     </AuthLayout>
   );
-}
+};
 export default SignUp;
