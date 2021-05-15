@@ -16,7 +16,7 @@ import PageTitle from "../components/PageTitle";
 import FormError from "../components/auth/FormError";
 import { useForm } from "react-hook-form";
 import { gql, useMutation } from "@apollo/client";
-import { isLoggedUserIn } from "../apollo";
+import { logUserIn } from "../apollo";
 
 const FacebookLogin = styled.div`
   color: #385285;
@@ -58,7 +58,7 @@ const Login = () => {
         });
         return;
       }
-      isLoggedUserIn(token);
+      logUserIn(token);
     },
   });
 

@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import { gql, useMutation } from "@apollo/client";
 import { useHistory } from "react-router";
 import FormError from "../components/auth/FormError";
-import { isLoggedUserIn } from "../apollo";
+import { logUserIn } from "../apollo";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -74,7 +74,7 @@ const SignUp = () => {
         console.log(error);
         return;
       }
-      isLoggedUserIn(token);
+      logUserIn(token);
       history.push(routes.home);
     },
   });

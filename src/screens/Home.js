@@ -1,11 +1,11 @@
 import React from "react";
-import { isLoggedUserOut } from "../apollo";
+import { logUserOut } from "../apollo";
 
 const Home = () => {
   return (
     <>
       <div>Home</div>
-      <button onClick={isLoggedUserOut}>Log out</button>
+      <button onClick={logUserOut}>Log out</button>
     </>
   );
 };
