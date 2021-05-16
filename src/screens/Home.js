@@ -1,7 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import React from "react";
-
 import Photo from "../components/feed/Photo";
+import PageTitle from "../components/PageTitle";
 
 const FEED_QUERY = gql`
   query seeFeed {
@@ -59,6 +59,7 @@ const Home = () => {
   const { data } = useQuery(FEED_QUERY);
   return (
     <div>
+      <PageTitle title="Home" />
       {testData.map((photo) => (
         <Photo key={photo.id} {...photo} />
       ))}
