@@ -13,15 +13,6 @@ import styled from "styled-components";
 import Avatar from "../Avatar";
 import { FatText } from "../shared";
 
-const TOGGLE_LIKE_MUTATION = gql`
-  mutation toggleLike($id: Int!) {
-    toggleLike(id: $id) {
-      ok
-      error
-    }
-  }
-`;
-
 const PhotoContainer = styled.div`
   background-color: white;
   border-radius: 4px;
@@ -72,6 +63,15 @@ const Likes = styled(FatText)`
   display: block;
 `;
 
+const TOGGLE_LIKE_MUTATION = gql`
+  mutation toggleLike($id: Int!) {
+    toggleLike(id: $id) {
+      ok
+      error
+    }
+  }
+`;
+
 function Photo({ id, user, file, isLiked, likes }) {
   const [like, setLike] = useState(isLiked);
   const toggleLike = () => {
@@ -86,10 +86,12 @@ function Photo({ id, user, file, isLiked, likes }) {
         fragment: gql`
           fragment Like on Photo {
             isLiked
+            likes
           }
         `,
         data: {
           isLiked: !isLiked,
+          likes: isLiked ? likes - 1 : likes + 1,
         },
       });
     }
