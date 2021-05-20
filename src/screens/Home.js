@@ -51,7 +51,7 @@ const testData = [
           avatar:
             "https://blog.kakaocdn.net/dn/cYoXBb/btqIMWuY1qW/fSwZ4nWQ57n0cQFEXUxdd0/img.jpg",
         },
-        payload: "Hello",
+        payload: "Hello #yaho",
         isMine: true,
         createdAt: "2021-05-16",
       },
